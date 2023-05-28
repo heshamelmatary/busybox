@@ -151,7 +151,8 @@ try $CC $CFLAGS $LDFLAGS \
 
 # Now try to remove each lib and build without it.
 # Stop when no lib can be removed.
-while test "$LDLIBS"; do
+while false; do
+#while test "$LDLIBS"; do
     $debug && echo "Trying libraries: $LDLIBS"
     dropped_non_first_lib=false
     first_lib=true

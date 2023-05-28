@@ -2294,7 +2294,8 @@ struct globals;
 /* '*const' ptr makes gcc optimize code much better.
  * Magic prevents ptr_to_globals from going into rodata.
  * If you want to assign a value, use SET_PTR_TO_GLOBALS(x) */
-extern struct globals *BB_GLOBAL_CONST ptr_to_globals;
+//extern struct globals *BB_GLOBAL_CONST ptr_to_globals;
+extern struct globals *ptr_to_globals;
 
 #define barrier() asm volatile ("":::"memory")
 
@@ -2302,18 +2303,19 @@ extern struct globals *BB_GLOBAL_CONST ptr_to_globals;
 /* Clang/llvm drops assignment to "constant" storage. Silently.
  * Needs serious convincing to not eliminate the store.
  */
-static ALWAYS_INLINE void* not_const_pp(const void *p)
+static ALWAYS_INLINE void* not_const_pp(void *p)
 {
 	void *pp;
 	asm volatile (
 		"# forget that p points to const"
-		: /*outputs*/ "=r" (pp)
-		: /*inputs*/ "0" (p)
+		: /*outputs*/ "=C" (pp)
+		: /*inputs*/ "C" (p)
 	);
 	return pp;
 }
+	//*(void**)not_const_pp(pptr) = (void*)(v);
 # define ASSIGN_CONST_PTR(pptr, v) do { \
-	*(void**)not_const_pp(pptr) = (void*)(v); \
+	*(void**)(pptr) = (void*)(v); \
 	barrier(); \
 } while (0)
 /* XZALLOC_CONST_PTR() is an out-of-line function to prevent
