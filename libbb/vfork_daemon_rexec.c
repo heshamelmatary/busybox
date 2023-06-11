@@ -39,7 +39,7 @@ int FAST_FUNC re_execed_comm(void)
 	/* Hopefully (strrchr(e) - e) evaluates to constant at compile time: */
 	expected_comm = bb_busybox_exec_path + (strrchr(e, '/') - e) + 1;
 
-	prctl(PR_GET_NAME, (long)comm, 0, 0, 0);
+	prctl(PR_GET_NAME, (__uintcap_t) &comm, 0, 0, 0);
 	//bb_error_msg("comm:'%.*s' expected:'%s'", 16, comm, expected_comm);
 	return strcmp(comm, expected_comm) == 0;
 }
@@ -47,7 +47,7 @@ int FAST_FUNC re_execed_comm(void)
 void FAST_FUNC set_task_comm(const char *comm)
 {
 	/* okay if too long (truncates) */
-	prctl(PR_SET_NAME, (long)comm, 0, 0, 0);
+	prctl(PR_SET_NAME, comm, 0, 0, 0);
 }
 #endif
 
